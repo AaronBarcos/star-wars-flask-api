@@ -1,0 +1,77 @@
+- Lista de endpoint a entregar para el proyecto
+
+[GET] /people Listar todos los registros de people en la base de datos.
+[GET] /people/<int:people_id> Muestra la información de un solo personaje según su id.
+[GET] /planets Listar todos los registros de planets en la base de datos.
+[GET] /planets/<int:planet_id> Muestra la información de un solo planeta según su id.
+[GET] /users Listar todos los usuarios del blog.
+    
+ENDPOINT CON CAMBIOS EN LAS RUTAS
+
+[GET] /users/<int:user_id>/favorites Listar todos los favoritos que pertenecen al usuario actual.
+[POST] /favorite/<int:user_id>/planet/<int:planet_id> Añade un nuevo planet favorito al usuario actual con el id = planet_id.
+[POST] /favorite/<int:user_id>/people/<int:people_id> Añade un nuevo people favorito al usuario actual con el id = people_id.
+[DELETE] /favorite/<int:user_id>/planet/<int:planet_id> Elimina un planet favorito con el id = planet_id.
+[DELETE] /favorite/<int:user_id>/people/<int:people_id> Elimina un people favorito con el id = people_id.
+
+Apuntes
+
+    Cuando se agregue o modifique la información de una tabla 
+    debemos correr dos comandos en la terminal:
+
+    - pipenv run migrate
+    - pipenv run upgrade
+
+    Y luego ir al archivo admin.py y agregar la tabla para poder
+    verla en el /admin
+
+    REINICIAR BASE DE DATOS SI LAS MIGRACIONS NO DEJAN DE MOSTRAR ERROR
+        bash docs/assets/reset_migrations.bash
+
+
+--------------------------- AYUDA QUERIES EN PYTHON ------------------------------------------
+
+
+--------------------------- Getting Data
+Assuming you have a Person object in your models.py file.
+# get all the people
+# SELECT * FROM Person;
+people_query = Person.query.all()
+
+# get only the ones named "Joe"
+people_query = Person.query.filter_by(name='Joe')
+#SELECT * FROM Person WHERE name = "Joe"
+
+# map the results and your list of people  inside of the all_people variable
+all_people = list(map(lambda x: x.serialize(), people_query))
+
+# get just one person basado en su llave primaria
+user1 = Person.query.get(person_id)
+
+-------------------------------- Inserting data
+Assuming you have a Person object in your models.py file.
+user1 = Person()
+user1.username = "my_super_username"
+user1.email = "my_super@email.com"
+db.session.add(user1)
+db.session.commit()
+
+--------------------------------- Updating data
+
+user1 = Person.query.get(person_id)
+if user1 is None:
+    return jsonify({'msg':'User not found'},404
+
+if "username" in body:
+    user1.username = body["username"]
+if "email" in body:
+    user1.email = body["email"]
+db.session.commit()
+
+--------------------------------- Delete data
+
+user1 = Person.query.get(person_id)
+if user1 is None:
+   return jsonify({'msg':'User not found'},404
+db.session.delete(user1)
+db.session.commit()
